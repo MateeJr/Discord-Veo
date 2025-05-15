@@ -100,16 +100,12 @@ class discordClient(discord.Client):
         self.conversation_history.append({'role': 'user', 'content': user_message})
         if len(self.conversation_history) > 26:
              del self.conversation_history[4:6]
-        if os.getenv("OPENAI_ENABLED") == "False":
-            async_create = sync_to_async(self.chatBot.chat.completions.create, 
-                                         thread_sensitive=True)
-            response: ChatCompletion = await async_create(model=self.chatModel, 
-                                                          messages=self.conversation_history)
-        else:
-            response = await self.openai_client.chat.completions.create(
-                model=self.chatModel,
-                messages=self.conversation_history
-            )
+        # Removed OpenAI client usage as part of image generation feature removal
+        # Now using only g4f providers
+        async_create = sync_to_async(self.chatBot.chat.completions.create, 
+                                     thread_sensitive=True)
+        response: ChatCompletion = await async_create(model=self.chatModel, 
+                                                      messages=self.conversation_history)
 
         bot_response = response.choices[0].message.content
         self.conversation_history.append({'role': 'assistant', 'content': bot_response})
