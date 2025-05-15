@@ -10,7 +10,7 @@ from g4f.Provider import (RetryProvider, FreeGpt, ChatgptNext, AItianhuSpace,
 
 from src.aclient import discordClient
 from discord import app_commands
-from src import log, art, personas
+from src import log, personas
 
 
 def run_discord_bot():
@@ -129,7 +129,6 @@ def run_discord_bot():
         await interaction.response.defer(ephemeral=False)
         await interaction.followup.send(""":star: **BASIC COMMANDS** \n
         - `/chat [message]` Chat with ChatGPT(gpt-4)
-        - `/draw [prompt][model]` Generate an image with model you specific
         - `/switchpersona [persona]` Switch between optional ChatGPT jailbreaks
                 `dan`: DAN 13.5 (Latest Working ChatGPT Jailbreak prompt)
                 `Smart mode`: AIM (Always Intelligent and Machiavellian)
@@ -149,31 +148,7 @@ https://github.com/Zero6992/chatGPT-discord-bot""")
             "\x1b[31mSomeone needs help!\x1b[0m")
 
 
-    @discordClient.tree.command(name="draw", description="Generate an image with the Dall-e-3 model")
-    @app_commands.choices(model=[
-        app_commands.Choice(name="gemini", value="gemini"),
-        app_commands.Choice(name="openai", value="openai"),
-        app_commands.Choice(name="bing", value="BingCreateImages"),
-    ])
-    async def draw(interaction: discord.Interaction, *, prompt: str, model: app_commands.Choice[str]):
-        if interaction.user == discordClient.user:
-            return
 
-        username = str(interaction.user)
-        channel = str(interaction.channel)
-        logger.info(
-            f"\x1b[31m{username}\x1b[0m : /draw [{prompt}] in ({channel})")
-
-        await interaction.response.defer(thinking=True, ephemeral=discordClient.isPrivate)
-        try:
-            image_url = await art.draw(model.value, prompt)
-
-            await interaction.followup.send(image_url)
-
-        except Exception as e:
-            await interaction.followup.send(
-                f'> Something Went Wrong, try again later.\n\nError Message:{e}')
-            logger.info(f"\x1b[31m{username}\x1b[0m :{e}")
 
     @discordClient.tree.command(name="switchpersona", description="Switch between optional chatGPT jailbreaks")
     @app_commands.choices(persona=[
